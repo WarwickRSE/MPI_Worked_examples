@@ -19,6 +19,7 @@ PROGRAM simple_write
   CALL MPI_Dims_create(nproc, 2, nprocs_cart, ierr)
   CALL MPI_Cart_create(MPI_COMM_WORLD, 2, nprocs_cart, periods, .TRUE., &
       cart_comm, ierr)
+  CALL MPI_Comm_rank(cart_comm, rank, ierr)
   CALL MPI_Cart_coords(cart_comm, rank, 2, coords, ierr)
 
   IF (rank == 0) THEN
