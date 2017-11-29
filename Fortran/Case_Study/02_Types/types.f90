@@ -206,9 +206,8 @@ MODULE display
     CALL MPI_Barrier(MPI_COMM_WORLD, ierr)
 
     !Divide the global size (nx x ny) per processor
-    !Note that MPI_Dims_create works backwards
-    nx_local = nx / nprocs(2)
-    ny_local = ny / nprocs(1)
+    nx_local = nx / nprocs(1)
+    ny_local = ny / nprocs(2)
 
     CALL MPI_Cart_create(MPI_COMM_WORLD, 2, nprocs, periods, .TRUE., &
         cart_comm, ierr)
@@ -217,17 +216,17 @@ MODULE display
     CALL MPI_Comm_rank(cart_comm, rank, ierr)
 
     !Get the rank of the neighbouring processors in Cartesian communicator
-    CALL MPI_Cart_shift(cart_comm, 1, 1, x_min_rank, x_max_rank, ierr)
-    CALL MPI_Cart_shift(cart_comm, 0, 1, y_min_rank, y_max_rank, ierr)
+    CALL MPI_Cart_shift(cart_comm, 0, 1, x_min_rank, x_max_rank, ierr)
+    CALL MPI_Cart_shift(cart_comm, 1, 1, y_min_rank, y_max_rank, ierr)
 
     !Get my coordinates in Cartesian communicator
     CALL MPI_Cart_coords(cart_comm, rank, 2, coordinates, ierr)
 
     !Calculate what fraction of the global array this processor has
-    x_cell_min_local = nx_local * coordinates(2) + 1
-    x_cell_max_local = nx_local * (coordinates(2) + 1)
-    y_cell_min_local = ny_local * coordinates(1) + 1
-    y_cell_max_local = ny_local * (coordinates(1) + 1)
+    x_cell_min_local = nx_local * coordinates(1) + 1
+    x_cell_max_local = nx_local * (coordinates(1) + 1)
+    y_cell_min_local = ny_local * coordinates(2) + 1
+    y_cell_max_local = ny_local * (coordinates(2) + 1)
 
     CALL create_types
 

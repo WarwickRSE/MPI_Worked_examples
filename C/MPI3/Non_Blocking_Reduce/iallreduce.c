@@ -14,7 +14,7 @@ int main(int argc, char ** argv)
 
   MPI_Allreduce(&rank, &recv, 1, MPI_INTEGER, MPI_MAX, MPI_COMM_WORLD);
 
-  printf("On rank %3d MPI_Allreduce gives maximum rank as %3d\n", rank, recv);
+  printf("On rank %3d MPI_Iallreduce gives maximum rank as %3d\n", rank, recv);
 
   MPI_Finalize();
 

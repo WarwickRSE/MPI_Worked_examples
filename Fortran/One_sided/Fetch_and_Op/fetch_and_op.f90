@@ -10,7 +10,6 @@ PROGRAM fetch_and_op
   INTEGER, PARAMETER :: tag = 100
 
   INTEGER :: rank, src, dest, nproc, dummy
-  INTEGER :: left, right
   INTEGER :: ierr, window, intsize
   INTEGER(KIND=MPI_ADDRESS_KIND) :: size_of_window, offset
 
@@ -18,12 +17,6 @@ PROGRAM fetch_and_op
 
   CALL MPI_Comm_size(MPI_COMM_WORLD, nproc, ierr)
   CALL MPI_Comm_rank(MPI_COMM_WORLD, rank, ierr)
-
-  !Set up periodic domain
-  left = rank - 1
-  IF (left < 0) left = nproc - 1
-  right = rank + 1
-  IF (right > nproc - 1) right = 0
 
   !In C would just use sizeof()
   !In Fortran2008, could use C_SIZEOF

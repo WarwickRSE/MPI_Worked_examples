@@ -92,22 +92,22 @@ MODULE display
     INTEGER :: ierr
 
     !Send left most strip of cells left and receive into right guard cells
-    CALL MPI_Sendrecv(array(1,:), ny_local + 2, MPI_REAL, x_min_rank, &
-        tag, array(nx_local+1,:), ny_local + 2, MPI_REAL, x_max_rank, &
+    CALL MPI_Sendrecv(array(1,1:ny_local), ny_local, MPI_REAL, x_min_rank, &
+        tag, array(nx_local+1,1:ny_local), ny_local, MPI_REAL, x_max_rank, &
         tag, cart_comm, MPI_STATUS_IGNORE, ierr)
 
     !Send right most strip of cells right and receive into left guard cells
-    CALL MPI_Sendrecv(array(nx_local, :), ny_local + 2, MPI_REAL, &
-        x_max_rank, tag, array(0,:), ny_local + 2, MPI_REAL, x_min_rank, &
+    CALL MPI_Sendrecv(array(nx_local, 1:ny_local), ny_local, MPI_REAL, &
+        x_max_rank, tag, array(0,1:ny_local), ny_local, MPI_REAL, x_min_rank, &
         tag, cart_comm, MPI_STATUS_IGNORE, ierr)
 
     !Now equivalently in y
-    CALL MPI_Sendrecv(array(:,1), nx_local + 2, MPI_REAL, y_min_rank, &
-        tag, array(:,ny_local+1), nx_local + 2, MPI_REAL, y_max_rank, &
+    CALL MPI_Sendrecv(array(1:nx_local,1), nx_local, MPI_REAL, y_min_rank, &
+        tag, array(1:nx_local,ny_local+1), nx_local, MPI_REAL, y_max_rank, &
         tag, cart_comm, MPI_STATUS_IGNORE, ierr)
 
-    CALL MPI_Sendrecv(array(:,ny_local), nx_local + 2, MPI_REAL, &
-        y_max_rank, tag, array(:,0), nx_local + 2, MPI_REAL, y_min_rank, &
+    CALL MPI_Sendrecv(array(1:nx_local,ny_local), nx_local, MPI_REAL, &
+        y_max_rank, tag, array(1:nx_local,0), nx_local, MPI_REAL, y_min_rank, &
         tag, cart_comm, MPI_STATUS_IGNORE, ierr)
 
   END SUBROUTINE bcs
