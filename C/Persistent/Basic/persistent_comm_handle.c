@@ -22,9 +22,9 @@ int main(int argc, char ** argv)
   if (right > nproc - 1) right = 0;
 
   time1 = MPI_Wtime();
-  MPI_Send_init(&rank, 1, MPI_INTEGER, right, TAG, MPI_COMM_WORLD,
+  MPI_Send_init(&rank, 1, MPI_INT, right, TAG, MPI_COMM_WORLD,
       requests);
-  MPI_Recv_init(&recv_rank, 1, MPI_INTEGER, left , TAG, MPI_COMM_WORLD,
+  MPI_Recv_init(&recv_rank, 1, MPI_INT, left , TAG, MPI_COMM_WORLD,
       requests+1);
   time2 = MPI_Wtime();
   for (repcount = 0; repcount <100000; ++repcount) {

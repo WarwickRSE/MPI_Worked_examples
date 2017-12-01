@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
     values_s[irank] = rank * nproc + irank;
   }
 
-  MPI_Alltoall(values_s, 1, MPI_INTEGER, values_r, 1, MPI_INTEGER,
+  MPI_Alltoall(values_s, 1, MPI_INT, values_r, 1, MPI_INT,
       MPI_COMM_WORLD);
 
   if (rank == 0) {

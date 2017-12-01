@@ -22,13 +22,13 @@ int main(int argc, char ** argv)
   time1 = MPI_Wtime();
   for (repcount = 0; repcount <100000; ++repcount) {
     if (rank%2 == 0) {
-      MPI_Ssend(&rank, 1, MPI_INTEGER, right, TAG, MPI_COMM_WORLD);
-      MPI_Recv(&recv_rank, 1, MPI_INTEGER, left, TAG, MPI_COMM_WORLD,
+      MPI_Ssend(&rank, 1, MPI_INT, right, TAG, MPI_COMM_WORLD);
+      MPI_Recv(&recv_rank, 1, MPI_INT, left, TAG, MPI_COMM_WORLD,
           MPI_STATUS_IGNORE);
     } else {
-      MPI_Recv(&recv_rank, 1, MPI_INTEGER, left, TAG, MPI_COMM_WORLD,
+      MPI_Recv(&recv_rank, 1, MPI_INT, left, TAG, MPI_COMM_WORLD,
           MPI_STATUS_IGNORE);
-      MPI_Ssend(&rank, 1, MPI_INTEGER, right, TAG, MPI_COMM_WORLD);
+      MPI_Ssend(&rank, 1, MPI_INT, right, TAG, MPI_COMM_WORLD);
     }
   }
   time2 = MPI_Wtime();

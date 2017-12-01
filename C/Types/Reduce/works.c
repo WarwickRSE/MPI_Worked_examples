@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     values[iitems] = rank;
   }
 
-  MPI_Type_contiguous(NITEMS, MPI_INTEGER, &contig_type);
+  MPI_Type_contiguous(NITEMS, MPI_INT, &contig_type);
   MPI_Type_commit(&contig_type);
 
   //Create an operator to add together this type
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 
   MPI_Reduce(values, values_recv, 1, contig_type, custom_sum, 0, 
       MPI_COMM_WORLD);
-  MPI_Reduce(values, values_recv_ref, NITEMS, MPI_INTEGER, MPI_SUM, 0,
+  MPI_Reduce(values, values_recv_ref, NITEMS, MPI_INT, MPI_SUM, 0,
       MPI_COMM_WORLD);
 
   MPI_Type_free(&contig_type);

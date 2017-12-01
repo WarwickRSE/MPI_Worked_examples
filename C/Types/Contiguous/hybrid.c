@@ -25,14 +25,14 @@ int main(int argc, char** argv)
     values[iitems] = rank;
   }
 
-  MPI_Type_contiguous(NITEMS, MPI_INTEGER, &contig_type);
+  MPI_Type_contiguous(NITEMS, MPI_INT, &contig_type);
   MPI_Type_commit(&contig_type);
 
   if (rank == 0) printf("MPI_Type_contiguous used as send type,"
       " conventional receive\n");
 
   MPI_Sendrecv(values, 1, contig_type, right, TAG, values_recv, NITEMS,
-      MPI_INTEGER, left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_INT, left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
   MPI_Type_free(&contig_type);
 

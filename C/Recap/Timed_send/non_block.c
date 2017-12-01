@@ -24,8 +24,8 @@ int main(int argc, char ** argv)
 
   time1 = MPI_Wtime();
   for (repcount = 0; repcount <100000; ++repcount) {
-    MPI_Isend(&rank, 1, MPI_INTEGER, right, TAG, MPI_COMM_WORLD, &requests[0]);
-    MPI_Irecv(&recv_rank, 1, MPI_INTEGER, left, TAG, MPI_COMM_WORLD,
+    MPI_Isend(&rank, 1, MPI_INT, right, TAG, MPI_COMM_WORLD, &requests[0]);
+    MPI_Irecv(&recv_rank, 1, MPI_INT, left, TAG, MPI_COMM_WORLD,
         &requests[1]);
     MPI_Waitall(2, requests, statuses);
   }

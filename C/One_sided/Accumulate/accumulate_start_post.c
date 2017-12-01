@@ -38,7 +38,7 @@ int main(int argc, char ** argv)
   src = rank;
   dest = 0;
 
-  MPI_Accumulate(&src, 1, MPI_INTEGER, 0, offset, 1, MPI_INTEGER,
+  MPI_Accumulate(&src, 1, MPI_INT, 0, offset, 1, MPI_INT,
       MPI_SUM, window);
 
   MPI_Win_complete(window);

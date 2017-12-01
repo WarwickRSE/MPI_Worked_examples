@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
   //Put the result into the first (zeroth) slot
   offset = 0;
   //Actual call to put the data in the remote processor
-  MPI_Put(&rank, 1, MPI_INTEGER, right, offset, 1, MPI_INTEGER,
+  MPI_Put(&rank, 1, MPI_INT, right, offset, 1, MPI_INT,
       window);
 
   //Call Win_fence again to end the access and exposure epochs

@@ -30,7 +30,7 @@ int main(int argc, char ** argv)
       //Lock the window on the remote rank
       MPI_Win_lock(MPI_LOCK_EXCLUSIVE, icycle, 0, window);
       //Actual call to put the data in the remote processor
-      MPI_Put(&icycle, 1, MPI_INTEGER, icycle, offset, 1, MPI_INTEGER, window);
+      MPI_Put(&icycle, 1, MPI_INT, icycle, offset, 1, MPI_INT, window);
       //Call to flush to complete the put now, because the code can't do
       //anything until the put is complete. This may not in general be true
       //Take care though, once you have called unlock, you can't flush

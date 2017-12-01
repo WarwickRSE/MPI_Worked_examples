@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
 
   time1 = MPI_Wtime();
   for (repcount = 0; repcount <100000; ++repcount) {
-    MPI_Sendrecv(&rank, 1, MPI_INTEGER, right, TAG, &recv_rank, 1, MPI_INTEGER,
+    MPI_Sendrecv(&rank, 1, MPI_INT, right, TAG, &recv_rank, 1, MPI_INT,
         left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
   }
   time2 = MPI_Wtime();

@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   right = rank + 1;
   if (right > nproc - 1) right = 0;
 
-  MPI_Sendrecv(&rank, 1, MPI_INTEGER, right, TAG, &recv_rank, 1, MPI_INTEGER,
+  MPI_Sendrecv(&rank, 1, MPI_INT, right, TAG, &recv_rank, 1, MPI_INT,
       left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
   printf("Rank %3d got message from rank %3d of %3d\n", rank, left, recv_rank);

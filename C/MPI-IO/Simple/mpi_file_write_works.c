@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
   charlength = sprintf(outstr, "Hello from processor %3d\n", rank);
 
   //Get the lengths of all other writes
-  MPI_Allgather(&charlength, 1, MPI_INTEGER, offsets, 1, MPI_INTEGER,
+  MPI_Allgather(&charlength, 1, MPI_INT, offsets, 1, MPI_INT,
       MPI_COMM_WORLD);
 
   //Calculate this processors offset in the file

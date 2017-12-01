@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     values[iitems] = rank;
   }
 
-  MPI_Type_contiguous(NITEMS, MPI_INTEGER, &contig_type);
+  MPI_Type_contiguous(NITEMS, MPI_INT, &contig_type);
   MPI_Type_commit(&contig_type);
 
   if (rank == 0) printf("MPI_Type_contiguous used as send and recieve types\n");

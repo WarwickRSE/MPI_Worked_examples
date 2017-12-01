@@ -66,7 +66,7 @@ int main(int argc, char ** argv)
   //Actual call to put the data in the remote processor
   if (rank == 0) {
     for (icycle = 1; icycle<nproc; ++icycle){
-      MPI_Put(&icycle, 1, MPI_INTEGER, icycle, offset, 1, MPI_INTEGER, window);
+      MPI_Put(&icycle, 1, MPI_INT, icycle, offset, 1, MPI_INT, window);
     }
   }
 

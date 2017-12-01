@@ -35,9 +35,9 @@ int main(int argc, char ** argv)
     send[cycle] = rank;
   }
 
-  MPI_Send_init(send, NELEMENTS, MPI_INTEGER, right, TAG, MPI_COMM_WORLD,
+  MPI_Send_init(send, NELEMENTS, MPI_INT, right, TAG, MPI_COMM_WORLD,
       requests);
-  MPI_Recv_init(recv, NELEMENTS, MPI_INTEGER, left , TAG, MPI_COMM_WORLD,
+  MPI_Recv_init(recv, NELEMENTS, MPI_INT, left , TAG, MPI_COMM_WORLD,
       requests+1);
   time2 = MPI_Wtime();
   free(send);

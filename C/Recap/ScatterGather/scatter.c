@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
     printf("Scattering input values to other processors\n");
   }
   MPI_Barrier(MPI_COMM_WORLD);
-  MPI_Scatter(values, 1, MPI_INTEGER, &recv, 1, MPI_INTEGER, 0,
+  MPI_Scatter(values, 1, MPI_INT, &recv, 1, MPI_INT, 0,
       MPI_COMM_WORLD);
   //Can now free values
   free(values);

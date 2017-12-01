@@ -29,13 +29,13 @@ int main(int argc, char ** argv)
     printf("Adding local rank to scattered value and sending to all "
         "processors via allgather\n");
   }
-  MPI_Scatter(values, 1, MPI_INTEGER, &recv, 1, MPI_INTEGER, 0,
+  MPI_Scatter(values, 1, MPI_INT, &recv, 1, MPI_INT, 0,
       MPI_COMM_WORLD);
 
   //Add the local rank to the received value
   recv += rank;
 
-  MPI_Allgather(&recv, 1, MPI_INTEGER, values, 1, MPI_INTEGER,
+  MPI_Allgather(&recv, 1, MPI_INT, values, 1, MPI_INT,
       MPI_COMM_WORLD);
 
   if (rank == nproc-1) {

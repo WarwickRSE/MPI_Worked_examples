@@ -26,8 +26,8 @@ int main(int argc, char** argv)
 
   if (rank == 0) printf("Conventional sendrecv\n");
 
-  MPI_Sendrecv(values, NITEMS, MPI_INTEGER, right, TAG, values_recv, NITEMS,
-      MPI_INTEGER, left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  MPI_Sendrecv(values, NITEMS, MPI_INT, right, TAG, values_recv, NITEMS,
+      MPI_INT, left, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
   sum = 0;
   for (iitems = 0; iitems < NITEMS; ++iitems){

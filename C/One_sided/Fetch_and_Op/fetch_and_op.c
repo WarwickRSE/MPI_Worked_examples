@@ -37,7 +37,7 @@ int main(int argc, char ** argv)
   "src" on all processors and put them into the MPI window (here dest)
   The second parameter contains the value of in the MPI window the
   content of the target buffer before accumulation*/
-  MPI_Fetch_and_op(&src, &dummy, MPI_INTEGER, 0, offset, MPI_SUM,
+  MPI_Fetch_and_op(&src, &dummy, MPI_INT, 0, offset, MPI_SUM,
       window);
 
   //Call Win_fence again to end the access and exposure epochs

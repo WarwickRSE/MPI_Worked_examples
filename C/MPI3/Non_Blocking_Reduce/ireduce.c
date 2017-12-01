@@ -11,7 +11,7 @@ int main(int argc, char ** argv)
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  MPI_Ireduce(&rank, &recv, 1, MPI_INTEGER, MPI_MAX, 0, MPI_COMM_WORLD,
+  MPI_Ireduce(&rank, &recv, 1, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD,
       &handle);
   MPI_Wait(&handle, MPI_STATUS_IGNORE);
 

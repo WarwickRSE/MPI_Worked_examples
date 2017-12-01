@@ -18,7 +18,7 @@ int main(int argc, char ** argv)
     scanf("%d", &recv);
   }
 
-  MPI_Bcast(&recv, 1, MPI_INTEGER, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&recv, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
   printf("On rank %3d MPI_Bcast gives value of %3d\n", rank, recv);
 
