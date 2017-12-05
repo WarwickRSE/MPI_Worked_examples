@@ -31,7 +31,7 @@ PROGRAM simple_write
       MPI_INTEGER, MPI_COMM_WORLD, ierr)
 
   !Calculate this processors offset in the file
-  my_offset = SUM(offsets(1:rank-1))
+  my_offset = SUM(offsets(1:rank))
 
   !Move the file pointer to that place
   CALL MPI_File_seek(file_handle, my_offset, MPI_SEEK_SET, ierr)
