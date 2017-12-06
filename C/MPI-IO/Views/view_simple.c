@@ -5,7 +5,7 @@
 int main(int argc, char ** argv)
 {
 
-  int rank, recv_rank, nproc, charlength, index;
+  int rank, recv_rank, nproc, index;
   MPI_File file_handle;
   MPI_Comm cart_comm;
   MPI_Datatype view_type;
@@ -16,7 +16,7 @@ int main(int argc, char ** argv)
   // the numbers that you put here. If you don't specify then you can get
   // anything
   int nprocs_cart[2]={0,0};
-  char outstr[2];
+  char outstr;
 
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
@@ -42,27 +42,15 @@ int main(int argc, char ** argv)
       MPI_MODE_WRONLY + MPI_MODE_CREATE, MPI_INFO_NULL, &file_handle);
 
   //Create the string. Character based on rank and a newline.
-  //Newline is only used at ends of rows
-  outstr[0] = 'A' + rank;
-  outstr[1] = '\n';
-  //Only output one character. Change later to output newlines
-  charlength = 1;
+  outstr = 'A' + rank;
 
   for(index = 0; index < 2; ++index){
     //You have one character per processor in each direction
     sizes[index] = nprocs_cart[index];
     starts[index] = coords[index];
   }
-  //You then add one character in each row for the newline character
-  sizes[0]++;
 
-  if(coords[0] == nprocs_cart[0]-1) {
-    //This is an end of line, so we write one more character for newline
-    subsizes[0]++;
-    charlength++;
-  }
-
-  //Using MPI_ORDER_FORTRAN in C so that you get the same answer as the 
+  //Using MPI_ORDER_FORTRAN in C so that you get the same answer as the
   //Fortran code, can freely change to MPI_ORDER_C
   MPI_Type_create_subarray(2, sizes, subsizes, starts, MPI_ORDER_FORTRAN,
       MPI_CHARACTER, &view_type);
@@ -72,7 +60,7 @@ int main(int argc, char ** argv)
       MPI_INFO_NULL);
 
   //Write using the individual file pointer
-  MPI_File_write(file_handle, outstr, charlength,
+  MPI_File_write(file_handle, &outstr, 1,
       MPI_CHARACTER, MPI_STATUS_IGNORE);
 
   MPI_File_close(&file_handle);

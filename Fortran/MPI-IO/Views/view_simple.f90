@@ -4,8 +4,8 @@ PROGRAM simple_write
   IMPLICIT NONE
 
   INTEGER :: rank, nproc, ierr, cart_comm
-  INTEGER :: file_handle, view_type, charlen
-  CHARACTER(len=2) :: outstr
+  INTEGER :: file_handle, view_type
+  CHARACTER(len=1) :: outstr
   INTEGER, DIMENSION(2) :: sizes, subsizes, starts, nprocs_cart, coords
   LOGICAL, DIMENSION(2) :: periods = .FALSE.
   INTEGER(KIND=MPI_OFFSET_KIND) :: offset = 0
@@ -35,22 +35,14 @@ PROGRAM simple_write
   CALL MPI_File_open(cart_comm, 'out.txt', &
       MPI_MODE_WRONLY + MPI_MODE_CREATE, MPI_INFO_NULL, file_handle, ierr)
 
-  charlen = 1
-  outstr = ACHAR(rank + ICHAR('A')) // NEW_LINE(' ')
+  outstr = ACHAR(rank + ICHAR('A'))
 
   !You have one character per processor in this direction
   !Plus one in X for newline character
-  sizes = nprocs_cart + (/1, 0/)
+  sizes = nprocs_cart
   !Each processor except the one at the end of the line only
   !outputs a single character
   subsizes = (/1, 1/)
-  !If you're at the end of a row add a line break
-  IF (coords(1) == nprocs_cart(1)-1) THEN
-    !Add the extra character to be written at line break
-    subsizes(1) = 2
-    !Number of characters to write
-    charlen = 2
-  END IF
   !The start of the view is just the coordinate of the current processor since
   !each procssor is only writing one character (apart from the last processor
   !in each line)
@@ -62,12 +54,11 @@ PROGRAM simple_write
   CALL MPI_File_set_view(file_handle, offset, MPI_BYTE, view_type, 'native', &
       MPI_INFO_NULL, ierr)
 
-  CALL MPI_File_write_all(file_handle, outstr, charlen, MPI_CHARACTER, &
+  CALL MPI_File_write_all(file_handle, outstr, 1, MPI_CHARACTER, &
       MPI_STATUS_IGNORE, ierr)
 
   !Close the file
   CALL MPI_File_close(file_handle, ierr)
-
 
   CALL MPI_Finalize(ierr)
 
