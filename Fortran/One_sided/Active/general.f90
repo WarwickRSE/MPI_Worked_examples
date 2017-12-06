@@ -76,7 +76,6 @@ PROGRAM wave
   IF (rank == 0) THEN
     !On processor zero, exit the "access epoch"
     CALL MPI_Win_complete(window, ierr)
-!  END IF
   ELSE
     !On all of the other processors, wait for sending to complete and then
     !exit the "exposure epoch"
