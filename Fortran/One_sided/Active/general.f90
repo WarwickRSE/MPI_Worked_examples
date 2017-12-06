@@ -47,7 +47,6 @@ PROGRAM wave
     !This allows rank 0 to MPI_Get and MPI_Put into windows on other processor
     !It does not allow other processors to access the window on rank 0
     CALL MPI_Win_start(group, 0, window, ierr)
-    CALL MPI_Win_post(group, 0, window, ierr)
   ELSE
     !You have to pass MPI_Win_post a group of processors that can write to it
     !Use MPI_Group_incl to create a group consisting only of processor 0
@@ -77,6 +76,7 @@ PROGRAM wave
   IF (rank == 0) THEN
     !On processor zero, exit the "access epoch"
     CALL MPI_Win_complete(window, ierr)
+!  END IF
   ELSE
     !On all of the other processors, wait for sending to complete and then
     !exit the "exposure epoch"
