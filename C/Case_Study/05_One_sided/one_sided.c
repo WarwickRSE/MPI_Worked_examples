@@ -50,10 +50,7 @@ void bcs(grid_type *dest)
   //arrays. If I was using a C ordered array then x offsets would be
   //multiplied by (ny_local+2)
 
-  //Use MPI_MODE_NOSTORE because until the next fence we're only updating
-  //Memory using MPI_Get, we're not doing any normal access (stores) to the
-  //array
-  MPI_Win_fence(MPI_MODE_NOSTORE, window);
+  MPI_Win_fence(0, window);
 
   offset = (MPI_Aint)1; //Getting from (1, 0)
   //Inserting into (nx_local+1, 0)
@@ -79,7 +76,7 @@ void bcs(grid_type *dest)
   MPI_Get(access_grid(dest, 0, 0 ), 1, type_y_dir, y_min_rank,
       offset, 1, type_y_dir, window);
 
-  MPI_Win_fence(MPI_MODE_NOSTORE, window);
+  MPI_Win_fence(0, window);
 
 }
 

@@ -132,7 +132,7 @@ MODULE display
     !Because I told MPI that the displacement was the size of a real
     !in MPI_Win_create
 
-    CALL MPI_Win_fence(MPI_MODE_NOSTORE, window, ierr)
+    CALL MPI_Win_fence(0, window, ierr)
 
     offset = INT(1, MPI_ADDRESS_KIND) !Getting from (1, 0)
     !Inserting into (nx_local+1, 0)
@@ -159,7 +159,7 @@ MODULE display
     CALL MPI_Get(values_local(0, 0), 1, type_y_dir, y_min_rank, &
         offset, 1, type_y_dir, window, ierr)
 
-    CALL MPI_Win_fence(MPI_MODE_NOSTORE, window, ierr)
+    CALL MPI_Win_fence(0, window, ierr)
 
 
   END SUBROUTINE bcs
