@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Resource requests
+#PBS -l walltime=00:00:05:00
+#PBS -l procs=28
+#PBS -l pmem=3882mb
+
+# Load intel libraries
+module load intel
+module load impi
+module load imkl
+
+# Run main t
+srun ./a.out
