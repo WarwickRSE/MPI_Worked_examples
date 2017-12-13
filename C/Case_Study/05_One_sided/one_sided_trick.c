@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-MPI_Datatype type_l_r, type_l_s, type_r_r, type_r_s;
-MPI_Datatype type_u_r, type_u_s, type_d_r, type_d_s;
+
+MPI_Datatype type_x_dir, type_y_dir;
 MPI_Win window;
 
 void create_single_type(int *sizes, int *subsizes, int *starts,
@@ -20,46 +20,21 @@ void create_single_type(int *sizes, int *subsizes, int *starts,
 
 void create_types()
 {
-
   int sizes[2], subsizes[2], starts[2];
 
   //Always the same sizes. This is local to each CPU
-  //So use nx_local, not nx. This is only true because this code has equal
-  //domains on each processor
-  sizes[0] = nx_local + 2; sizes[1] = ny_local + 2;
+  //So use nx_local, not nx
+  sizes[0] = nx_local+2; sizes[1] = ny_local+2;
   //Same subsizes for all sends and receives in x direction
   subsizes[0] = 1; subsizes[1] = ny_local;
-
-  //Receive on left boundary
+  //All operations in x direction
   starts[0] = 0; starts[1] = 1;
-  create_single_type(sizes, subsizes, starts, &type_l_r);
-
-  //Send on left boundary
-  starts[0] = 1; starts[1] = 1;
-  create_single_type(sizes, subsizes, starts, &type_l_s);
-
-  //Receive on right boundary
-  starts[0] = nx_local+1; starts[1] = 1;
-  create_single_type(sizes, subsizes, starts, &type_r_r);
-
-  //Send on right boundary
-  starts[0] = nx_local; starts[1] = 1;
-  create_single_type(sizes, subsizes, starts, &type_r_s);
+  create_single_type(sizes, subsizes, starts, &type_x_dir);
 
   //Same subsizes for all sends and receives in y direction
-  subsizes[0] = nx_local; subsizes[1] =  1;
-
+  subsizes[0] = nx_local; subsizes[1] = 1;
   starts[0] = 1; starts[1] = 0;
-  create_single_type(sizes, subsizes, starts, &type_d_r);
-
-  starts[0] = 1; starts[1] = 1;
-  create_single_type(sizes, subsizes, starts, &type_d_s);
-
-  starts[0] =1; starts[1] = ny_local+1;
-  create_single_type(sizes, subsizes, starts, &type_u_r);
-
-  starts[0] = 1; starts[1] = ny_local;
-  create_single_type(sizes, subsizes, starts, &type_u_s);
+  create_single_type(sizes, subsizes, starts, &type_y_dir);
 }
 
 void bcs(grid_type *dest)
@@ -67,21 +42,39 @@ void bcs(grid_type *dest)
 
   MPI_Aint offset;
 
+  //Note that all offsets are in multiples of size of float (4 bytes)
+  //Because I told MPI that the displacement was the size of a float
+  //in MPI_Win_create
+
+  //Note also that my mechanism for calculating offsets is for Fortran ordered
+  //arrays. If I was using a C ordered array then x offsets would be
+  //multiplied by (ny_local+2)
 
   MPI_Win_fence(0, window);
 
-  offset = 0; //No offset, using types
-  MPI_Get(dest->data, 1, type_r_r, x_max_rank,
-      offset, 1, type_l_s, window);
+  offset = (MPI_Aint)1; //Getting from (1, 0)
+  //Inserting into (nx_local+1, 0)
+  MPI_Get(access_grid(dest, nx_local + 1, 0 ), 1, type_x_dir, x_max_rank,
+      offset, 1, type_x_dir, window);
 
-  MPI_Get(dest->data, 1, type_l_r, x_min_rank,
-      offset, 1, type_r_s, window);
+  offset = (MPI_Aint)nx_local; //Getting from (nx_local, 0)
+  //Inserting into (0,0)
+  MPI_Get(access_grid(dest, 0, 0 ), 1, type_x_dir, x_min_rank,
+      offset, 1, type_x_dir, window);
 
-  MPI_Get(dest->data, 1, type_u_r, y_max_rank,
-      offset, 1, type_d_s, window);
+  offset = (MPI_Aint)(1) *
+           (MPI_Aint)(nx_local+2);//Getting from (0, 1)
+           //Multiply by length in x to get offset
+  //Inserting into (0, ny_local + 1)
+  MPI_Get(access_grid(dest, 0, ny_local+1 ), 1, type_y_dir, y_max_rank,
+      offset, 1, type_y_dir, window);
 
-  MPI_Get(dest->data, 1, type_d_r, y_min_rank,
-      offset, 1, type_u_s, window);
+  offset = (MPI_Aint)(ny_local) *
+           (MPI_Aint)(nx_local+2);//Getting from (0, ny_local)
+             //Multiply by length in x to get offset
+    //Inserting into (0, 0)
+  MPI_Get(access_grid(dest, 0, 0 ), 1, type_y_dir, y_min_rank,
+      offset, 1, type_y_dir, window);
 
   MPI_Win_fence(0, window);
 

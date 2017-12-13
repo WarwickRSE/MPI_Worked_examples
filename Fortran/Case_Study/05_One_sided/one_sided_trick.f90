@@ -18,8 +18,8 @@ MODULE display
   INTEGER :: nproc, rank, cart_comm
   INTEGER, DIMENSION(2) :: nprocs, coordinates
   INTEGER :: x_min_rank, x_max_rank, y_min_rank, y_max_rank
-  INTEGER :: type_l_r, type_l_s, type_r_r, type_r_s
-  INTEGER :: type_u_r, type_u_s, type_d_r, type_d_s
+  INTEGER :: type_x_dir
+  INTEGER :: type_y_dir
   INTEGER :: window
 
   CONTAINS
@@ -106,40 +106,16 @@ MODULE display
     !Always the same sizes. This is local to each CPU
     !So use nx_local, not nx
     sizes = (/nx_local+2, ny_local+2/)
-
     !Same subsizes for all sends and receives in x direction
     subsizes = (/1, ny_local/)
-
-    !Receive on left boundary
+    !All operations in x direction
     starts = (/0, 1/)
-    CALL create_single_type(sizes, subsizes, starts, type_l_r)
-
-    !Send on left boundary
-    starts = (/1, 1/)
-    CALL create_single_type(sizes, subsizes, starts, type_l_s)
-
-    !Receive on right boundary
-    starts = (/nx_local+1, 1/)
-    CALL create_single_type(sizes, subsizes, starts, type_r_r)
-
-    !Send on right boundary
-    starts = (/nx_local, 1/)
-    CALL create_single_type(sizes, subsizes, starts, type_r_s)
+    CALL create_single_type(sizes, subsizes, starts, type_x_dir)
 
     !Same subsizes for all sends and receives in y direction
     subsizes = (/nx_local, 1/)
-
     starts = (/1, 0/)
-    CALL create_single_type(sizes, subsizes, starts, type_d_r)
-
-    starts = (/1, 1/)
-    CALL create_single_type(sizes, subsizes, starts, type_d_s)
-
-    starts = (/1, ny_local+1/)
-    CALL create_single_type(sizes, subsizes, starts, type_u_r)
-
-    starts = (/1, ny_local/)
-    CALL create_single_type(sizes, subsizes, starts, type_u_s)
+    CALL create_single_type(sizes, subsizes, starts, type_y_dir)
 
   END SUBROUTINE create_types
 
@@ -158,19 +134,30 @@ MODULE display
 
     CALL MPI_Win_fence(0, window, ierr)
 
-    !Offset always zero because using types
-    offset = 0
-    CALL MPI_Get(values_local, 1, type_r_r, x_max_rank, &
-        offset, 1, type_l_s, window, ierr)
+    offset = INT(1, MPI_ADDRESS_KIND) !Getting from (1, 0)
+    !Inserting into (nx_local+1, 0)
+    CALL MPI_Get(values_local(nx_local+1, 0), 1, type_x_dir, x_max_rank, &
+        offset, 1, type_x_dir, window, ierr)
 
-    CALL MPI_Get(values_local, 1, type_l_r, x_min_rank, &
-        offset, 1, type_r_s, window, ierr)
+    offset = INT(nx_local, MPI_ADDRESS_KIND) !Getting from (nx_local, 0)
+    !Inserting into (0,0)
+    CALL MPI_Get(values_local(0, 0), 1, type_x_dir, x_min_rank, &
+        offset, 1, type_x_dir, window, ierr)
 
-    CALL MPI_Get(values_local, 1, type_u_r, y_max_rank, &
-        offset, 1, type_d_s, window, ierr)
+    offset = INT(1, MPI_ADDRESS_KIND) * &
+             INT(nx_local+2, MPI_ADDRESS_KIND) !Getting from (0, 1)
+             !Multiply by length in x to get offset
+    !Inserting into (0, ny_local + 1)
+    CALL MPI_Get(values_local(0, ny_local + 1), 1, type_y_dir, y_max_rank, &
+        offset, 1, type_y_dir, window, ierr)
 
-    CALL MPI_Get(values_local, 1, type_d_r, y_min_rank, &
-        offset, 1, type_u_s, window, ierr)
+    !Now y direction
+    offset = INT(ny_local, MPI_ADDRESS_KIND) * & 
+             INT(nx_local+2, MPI_ADDRESS_KIND) !Getting from (0, ny_local)
+             !Multiply by length in x to get offset
+    !Inserting into (0, 0)
+    CALL MPI_Get(values_local(0, 0), 1, type_y_dir, y_min_rank, &
+        offset, 1, type_y_dir, window, ierr)
 
     CALL MPI_Win_fence(0, window, ierr)
 
